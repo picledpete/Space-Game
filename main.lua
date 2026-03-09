@@ -15,6 +15,7 @@ function love.load()
     rotSpeed = 3
     cxpos = 0
     cypos = 0
+    shift = false
     scale = 1/2
     xoffset = winX/2 * (1-scale)
     yoffset = winY/2 * (1-scale)
@@ -27,31 +28,10 @@ function love.load()
     --[[bh1 = newPlanet(
     3,{-650,-100},{0,0},100000000,"s"
     )]]
-    star1 = newPlanet(
-        14,
-        {-200,0},
-        {0,10},
-        30000000,
-        "s"
-    )
-    s2 = newPlanet(
-        5,
-        {0400,40},
-        {0,-10},
-        30000001,
-        "s"
-    )
-    p1 = newPlanet(
-        7,
-        {100,-140},
-        {-10,-80},
-        100,
-        "p"
-    )
+    cxoffset = cxpos + winX * (1/2 * scale)
+    cyoffset = cypos + winY * (1/2 * scale)
     objects = {
-        s2,
-        star1,
-        p1,bh1
+
     }
 end
 function love.update(dt)
@@ -84,20 +64,30 @@ function love.update(dt)
         local ctable = getObjectFromId(curPlanId)
             if curPlanId ~= 0 and planetMenu then
         local rotV = 0
+        local speed = math.sqrt(objects[ctable].xvel^2 + objects[ctable].yvel^2)
+        if speed ~= 0 then
         local movSpeed = 0
-                if love.keyboard.isDown("up") then
-                    movSpeed = 1/2
+                if love.keyboard.isDown("up") and shift then
+                    movSpeed = 0.03
+                elseif love.keyboard.isDown("down") and shift then
+                    movSpeed = -0.03
                 elseif love.keyboard.isDown("down") then
                     movSpeed = -1/2
+                elseif love.keyboard.isDown("up") then
+                    movSpeed = 1/2
                 else
                     movSpeed = 0
                 end
 
-                local speed = math.sqrt(objects[ctable].xvel^2 + objects[ctable].yvel^2)
+                
                 dirX = objects[ctable].xvel/speed
                 dirY = objects[ctable].yvel/speed
                 objects[ctable].xvel = objects[ctable].xvel + dirX*movSpeed
                 objects[ctable].yvel = objects[ctable].yvel + dirY*movSpeed
+            elseif love.keyboard.isDown("up") or love.keyboard.isDown("down") then
+                objects[ctable].xvel = objects[ctable].xvel + 0.01
+                objects[ctable].yvel = objects[ctable].yvel + 0.01
+            end
                 if love.keyboard.isDown("left") then
                     rotV = -rotSpeed * dt
                 elseif love.keyboard.isDown("right") then
@@ -123,6 +113,8 @@ function love.draw()
     love.graphics.setColor(1,1,1)
     love.graphics.printf("Objects: "..#objects,0,0,250,"left")
     love.graphics.printf("Speed: x"..speedMod,0,15,250,"left")
+    love.graphics.printf("Zoom: x"..scale,0,30,250,"left")
+    
     for i,v in ipairs(objects) do
         planetDraw(v)
     end
@@ -148,8 +140,33 @@ function love.draw()
                     keyDown = false
                     objects[ctable].mass = objects[ctable].mass -1
                 end
+                if keyDown and ckey == "q" then
+                    keyDown = false
+                    objects[ctable].size = math.abs(objects[ctable].size -1)
+                end
+                if keyDown and ckey == "e" then
+                    keyDown = false
+                    objects[ctable].size = objects[ctable].size +1
+                end
+                if keyDown and ckey == "t" then
+                    keyDown = false
+                    if objects[ctable].type == "p" then
+                        objects[ctable].type = "s"
+                    else
+                        objects[ctable].type = "p"
+                    end
+                end
                 
                 love.graphics.printf("Mass: "..objects[ctable].mass,0,60,250,"left")
+                love.graphics.printf("Size: "..objects[ctable].size,0,75,250,"left")
+                
+                if objects[ctable].type == "p" then
+                        love.graphics.printf("Type: Planet",0,90,250,"left")
+                    else
+                        love.graphics.printf("Type: Star",0,90,250,"left")
+                    end
+                    love.graphics.printf("Velocities: {"..objects[ctable].xvel..","..objects[ctable].yvel.."}",0,105,250,"left")
+                    love.graphics.printf("Coordinates: {"..objects[ctable].pos[1]..","..objects[ctable].pos[2].."}",0,135,250,"left")
             else
                 curPlanId = 0
             end
@@ -162,10 +179,16 @@ end
 
 
 function love.wheelmoved(x,y)
-    denom = math.abs(y/math.abs(y) + (scale^-1))
-    scale = 1/denom
+    if y>0 and scale<10 then
+        scale = scale * 1.2
+    elseif scale >0.01 and y<0 then
+        scale = scale/1.2
+    end
+
     xoffset = winX/2 * (1-scale)
     yoffset = winY/2 * (1-scale)
+    cxoffset = cxpos + winX * (1/2 * scale)
+    cyoffset = cypos + winY * (1/2 * scale)
 end
 
 function love.mousepressed(x,y,button)
@@ -215,6 +238,8 @@ function love.mousemoved(x,y,dx,dy)
     if mouseDragging and dragMode == 3 then
     cxpos = cxpos + dx/1
     cypos = cypos + dy/1
+    cxoffset = cxpos + winX * (1/2 * scale)
+    cyoffset = cypos + winY * (1/2 * scale)
     end
 end
 
@@ -225,13 +250,30 @@ function love.keypressed(key)
     if key == "-" then
         speedMod = math.abs(speedMod - 1)
     end
+    if key == "]" then
+        speedMod = speedMod + 5
+    end
+    if key == "[" then
+        speedMod = speedMod - 5
+        if speedMod <0 then
+            speedMod = 0
+        end
+    end
     if key == "r" then
         planetMenu = not planetMenu
+    end
+    if key == "lshift" then
+        shift = true
     end
     ckey = key
     keyDown = true
 end
+function love.keyreleased(key)
+    if key == "lshift" then
+        shift = false
+    end
 
+end
 function mergeBodies(tab1,tab2,type)
     nrad = math.floor(math.sqrt(tab1.size^2 + tab2.size^2)+0.5)
     m = tab1.mass + tab2.mass
