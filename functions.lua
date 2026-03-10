@@ -1,3 +1,4 @@
+local json = require("dkjson")
 local sqrt = math.sqrt
 function planetUpdate(table,dt)
     ptable = table
@@ -17,6 +18,8 @@ function planetUpdate(table,dt)
     end
     --ptable.xvel = ptable.xvel + sunDir[1] * gravMult
     --ptable.yvel = ptable.yvel + sunDir[2] * gravMult
+    --ptable.xvel = ptable.xvel * 0.999
+    --ptable.yvel = ptable.yvel * 0.999
     ptable.pos = {ptable.pos[1] + ptable.xvel *dt ,ptable.pos[2] + ptable.yvel* dt}
     return ptable
 end
@@ -33,6 +36,9 @@ function planetDraw(ptable)
     else
         if ptable.type == "s" then
         clr = getStarColor(ptable.mass)
+        local brightness = 0.7 + math.sin(love.timer.getTime())*0.3
+        love.graphics.setColor(clr[1],clr[2],clr[3],brightness/5)
+             love.graphics.circle("fill",ptable.pos[1]*scale+xoffset+cxoffset,ptable.pos[2]*scale+yoffset+cyoffset,math.ceil(ptable.size*scale*2.5))
         love.graphics.setColor(clr[1],clr[2],clr[3])
         else
         love.graphics.setColor(1,1,1)
@@ -102,8 +108,8 @@ function randomStart(planNum,starNum)
 for i=1,planNum do
     local x = love.math.random(-800,800)
     local y = love.math.random(-800,800)
-    local mass = love.math.random(0.05,8)
-    local vel = {love.math.random(-0.5,0.5),love.math.random(-0.5,0.5)}
+    local mass = love.math.random(0.05,3)
+    local vel = {love.math.random(-0.2,0.2),love.math.random(-0.2,0.2)}
     local size = love.math.random(1,3)
     local p = newPlanet(size,{x,y},vel,mass,"p")
     table.insert(objects,p)
@@ -112,9 +118,21 @@ for i=1,starNum do
     local x = love.math.random(-800,800)
     local y = love.math.random(-800,800)
     local mass = love.math.random(70,250)
-    local vel = {love.math.random(-0.3,0.3),love.math.random(-0.3,0.3)}
+    local vel = {love.math.random(-0.15,0.15),love.math.random(-0.15,0.15)}
     local size = love.math.random(3,9)
     local s = newPlanet(size,{x,y},vel,mass,"s")
     table.insert(objects,s)
 end
+end
+function saveGame(filename)
+    local file = io.open(filename,"w")
+    local jsonStr = json.encode(objects,{indent=true})
+    file:write(jsonStr)
+    file:close()
+end
+function loadGame(filename)
+    local file = io.open(filename,"r")
+    local text = file:read("*all")
+    file:close()
+    objects = json.decode(text)
 end

@@ -4,6 +4,7 @@ function love.load()
     love.window.setMode(800,600,{vsync=1})
     G = 0.05
     nId = 1
+    dt1 = 0
     curPlanet = {}
     mouseDragging = false
     keyDown = false
@@ -34,9 +35,13 @@ function love.load()
     objects = {
 
     }
-    randomStart(50,12)
+
+    --loadGame("test1.json")
+    randomStart(100,17)
 end
+
 function love.update(dt)
+    dt1 = dt
     local collisions = {}
     for i,v in ipairs(objects) do
         objects[i] = planetUpdate(v,(dt*speedMod))
@@ -110,6 +115,18 @@ function love.update(dt)
                 
                 mergeBodies(v[1],v[2])
             end
+    if love.keyboard.isDown("w") then
+        cypos = cypos+4
+    end
+    if love.keyboard.isDown("s") then
+        cypos = cypos-4
+    end
+    if love.keyboard.isDown("d") then
+        cxpos = cxpos-4
+    end
+    if love.keyboard.isDown("a") then
+        cxpos = cxpos+4
+    end
 end
 function love.draw()
     love.graphics.setColor(1,1,1)
@@ -147,6 +164,10 @@ function love.draw()
                     objects[ctable].size = math.abs(objects[ctable].size -1)
                 end
                 if keyDown and ckey == "e" then
+                    keyDown = false
+                    objects[ctable].size = objects[ctable].size +1
+                end
+                if keyDown and ckey == "w" then
                     keyDown = false
                     objects[ctable].size = objects[ctable].size +1
                 end
@@ -274,6 +295,9 @@ function love.keypressed(key)
         cxpos = 0
         cypos = 0
     end
+    if key == "h" then
+        saveGame("test1.json")
+    end
     ckey = key
     keyDown = true
 end
@@ -299,4 +323,8 @@ function mergeBodies(tab1,tab2,type)
 
         end
     end
+end
+function love.resize(w,h)
+    winX = w
+    winY = h
 end
