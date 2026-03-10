@@ -37,14 +37,22 @@ function love.load()
     }
 
     --loadGame("test1.json")
-    randomStart(100,17)
+    randomStart(115,16)
 end
 
 function love.update(dt)
     dt1 = dt
     local collisions = {}
+    for i=1,#objects-1 do
+        for j=i+1,#objects do
+            local res = planetUpdate(i,j)
+            objects[i] = res[1]
+            objects[j] = res[2]
+        end
+    end
     for i,v in ipairs(objects) do
-        objects[i] = planetUpdate(v,(dt*speedMod))
+        objects[i].pos[1] = objects[i].pos[1] + objects[i].xvel*dt *speedMod
+        objects[i].pos[2] = objects[i].pos[2] + objects[i].yvel*dt *speedMod
     end
 
     for i,v in ipairs(objects) do
