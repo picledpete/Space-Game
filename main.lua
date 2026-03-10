@@ -2,19 +2,20 @@ require("functions")
 local sqrt = math.sqrt
 function love.load()
     love.window.setMode(800,600,{vsync=1})
-    G = 0.01
+    G = 0.05
     nId = 1
     curPlanet = {}
     mouseDragging = false
     keyDown = false
     ckey = ""
-    speedMod = 1
+    speedMod = 0
     dragMode = 0
     winX = 800
     winY = 600
     rotSpeed = 3
     cxpos = 0
     cypos = 0
+    ctrl = 0
     shift = false
     scale = 1/2
     xoffset = winX/2 * (1-scale)
@@ -33,6 +34,7 @@ function love.load()
     objects = {
 
     }
+    randomStart(50,12)
 end
 function love.update(dt)
     local collisions = {}
@@ -68,9 +70,9 @@ function love.update(dt)
         if speed ~= 0 then
         local movSpeed = 0
                 if love.keyboard.isDown("up") and shift then
-                    movSpeed = 0.03
+                    movSpeed = 0.03 -ctrl*0.02
                 elseif love.keyboard.isDown("down") and shift then
-                    movSpeed = -0.03
+                    movSpeed = -0.03 +ctrl*0.02
                 elseif love.keyboard.isDown("down") then
                     movSpeed = -1/2
                 elseif love.keyboard.isDown("up") then
@@ -265,12 +267,22 @@ function love.keypressed(key)
     if key == "lshift" then
         shift = true
     end
+    if key == "lctrl" then
+        ctrl = 1
+    end
+    if key == "m" then
+        cxpos = 0
+        cypos = 0
+    end
     ckey = key
     keyDown = true
 end
 function love.keyreleased(key)
     if key == "lshift" then
         shift = false
+    end
+    if key == "lctrl" then
+        ctrl = 0
     end
 
 end
