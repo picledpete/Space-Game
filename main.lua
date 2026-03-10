@@ -37,22 +37,26 @@ function love.load()
     }
 
     --loadGame("test1.json")
-    randomStart(115,16)
+    randomStart(140,60)
 end
 
 function love.update(dt)
     dt1 = dt
     local collisions = {}
-    for i=1,#objects-1 do
-        for j=i+1,#objects do
-            local res = planetUpdate(i,j)
-            objects[i] = res[1]
-            objects[j] = res[2]
+    if speedMod ~= 0 then
+        for i=1,#objects-1 do
+            for j=i+1,#objects do
+                local res = planetUpdate(i,j,dt)
+                objects[i] = res[1]
+                objects[j] = res[2]
+            end
         end
     end
     for i,v in ipairs(objects) do
         objects[i].pos[1] = objects[i].pos[1] + objects[i].xvel*dt *speedMod
         objects[i].pos[2] = objects[i].pos[2] + objects[i].yvel*dt *speedMod
+
+
     end
 
     for i,v in ipairs(objects) do
@@ -83,9 +87,9 @@ function love.update(dt)
         if speed ~= 0 then
         local movSpeed = 0
                 if love.keyboard.isDown("up") and shift then
-                    movSpeed = 0.03 -ctrl*0.02
+                    movSpeed = 0.03
                 elseif love.keyboard.isDown("down") and shift then
-                    movSpeed = -0.03 +ctrl*0.02
+                    movSpeed = -0.03
                 elseif love.keyboard.isDown("down") then
                     movSpeed = -1/2
                 elseif love.keyboard.isDown("up") then

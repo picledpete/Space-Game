@@ -9,14 +9,14 @@ function planetUpdate(i1,i2,dt)
                 dy = ptable2.pos[2] - ptable.pos[2]
                 d = sqrt(dx^2+dy^2)
                 movDir = {dx/d,dy/d}
-                local f = G/(d^2+5)
+                local f = G/(d^2+5) * dt * speedMod
                 xf = dx/d*f
                 yf = dy/d*f
                 ptable.xvel = ptable.xvel + xf*ptable2.mass
                 ptable.yvel = ptable.yvel + yf*ptable2.mass
 
-                ptable2.xvel = ptable2.xvel + xf*ptable.mass
-                ptable2.yvel = ptable2.yvel + yf*ptable.mass
+                ptable2.xvel = ptable2.xvel - xf*ptable.mass
+                ptable2.yvel = ptable2.yvel - yf*ptable.mass
 
     --ptable.xvel = ptable.xvel + sunDir[1] * gravMult
     --ptable.yvel = ptable.yvel + sunDir[2] * gravMult
@@ -108,20 +108,20 @@ end
 
 function randomStart(planNum,starNum)
 for i=1,planNum do
-    local x = love.math.random(-1000,1000)
-    local y = love.math.random(-1000,1000)
-    local mass = randFloat(0.05,3)
-    local vel = {randFloat(-0.2,0.2),randFloat(-0.2,0.2)}
+    local x = love.math.random(-700,700)
+    local y = love.math.random(-700,700)
+    local mass = randFloat(0.05,0.9)
+    local vel = {randFloat(-1,1),randFloat(-1,1)}
 
     local size = love.math.random(1,3)
     local p = newPlanet(size,{x,y},vel,mass,"p")
     table.insert(objects,p)
 end
 for i=1,starNum do
-    local x = love.math.random(-1000,1000)
-    local y = love.math.random(-1000,1000)
+    local x = love.math.random(-700,700)
+    local y = love.math.random(-700,700)
     local mass = love.math.random(70,250)
-    local vel = {randFloat(-0.15,0.15),randFloat(-0.15,0.15)}
+    local vel = {randFloat(-1,1),randFloat(-1,1)}
     local size = love.math.random(3,9)
     local s = newPlanet(size,{x,y},vel,mass,"s")
     table.insert(objects,s)
