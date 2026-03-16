@@ -32,12 +32,13 @@ function love.load()
     )]]
     cxoffset = cxpos + winX * (1/2 * scale)
     cyoffset = cypos + winY * (1/2 * scale)
+    focusObject = false
     objects = {
 
     }
 
     --loadGame("test1.json")
-    randomStart(140,60)
+    randomStart(100,30)
 end
 
 function love.update(dt)
@@ -153,7 +154,10 @@ function love.draw()
         if curPlanId ~= 0 then
             love.graphics.printf("Id: "..curPlanId,0,45,250,"left")
             local ctable = getObjectFromId(curPlanId)
-            
+            if focusObject == true then
+                cxpos = -objects[ctable].pos[1] * scale
+                cypos = -objects[ctable].pos[2] * scale
+            end
             if ctable ~= 0 then
                 if keyDown and ckey == "z" then
                     keyDown = false
@@ -191,6 +195,7 @@ function love.draw()
                         objects[ctable].type = "p"
                     end
                 end
+
                 
                 love.graphics.printf("Mass: "..objects[ctable].mass,0,60,250,"left")
                 love.graphics.printf("Size: "..objects[ctable].size,0,75,250,"left")
@@ -286,16 +291,19 @@ function love.keypressed(key)
         speedMod = math.abs(speedMod - 1)
     end
     if key == "]" then
-        speedMod = speedMod + 5
+        speedMod = speedMod + 10
     end
     if key == "[" then
-        speedMod = speedMod - 5
+        speedMod = speedMod - 10
         if speedMod <0 then
             speedMod = 0
         end
     end
     if key == "r" then
         planetMenu = not planetMenu
+    end
+    if key == "t" then
+        focusObject = not focusObject
     end
     if key == "lshift" then
         shift = true
@@ -323,6 +331,9 @@ function love.keyreleased(key)
 
 end
 function mergeBodies(tab1,tab2,type)
+    if curPlanId == tab1.id or curPlanId == tab2.id then
+        curPlanId = 0
+    end
     nrad = math.floor(math.sqrt(tab1.size^2 + tab2.size^2)+0.5)
     m = tab1.mass + tab2.mass
     vx = (tab1.xvel*tab1.mass +tab2.xvel *tab2.mass)/m

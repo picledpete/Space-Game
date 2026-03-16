@@ -111,7 +111,7 @@ for i=1,planNum do
     local x = love.math.random(-700,700)
     local y = love.math.random(-700,700)
     local mass = randFloat(0.05,0.9)
-    local vel = {randFloat(-1,1),randFloat(-1,1)}
+    local vel = {randFloat(-0.7,0.7),randFloat(-0.7,0.7)}
 
     local size = love.math.random(1,3)
     local p = newPlanet(size,{x,y},vel,mass,"p")
@@ -120,8 +120,8 @@ end
 for i=1,starNum do
     local x = love.math.random(-700,700)
     local y = love.math.random(-700,700)
-    local mass = love.math.random(70,250)
-    local vel = {randFloat(-1,1),randFloat(-1,1)}
+    local mass = love.math.random(70,200)
+    local vel = {randFloat(-0.7,0.7),randFloat(-0.7,0.7)}
     local size = love.math.random(3,9)
     local s = newPlanet(size,{x,y},vel,mass,"s")
     table.insert(objects,s)
