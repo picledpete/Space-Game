@@ -1,4 +1,4 @@
-
+--[[
 function love.wheelmoved(x,y)
     if y>0 and scale<10 then
         scale = scale * 1.2
@@ -32,7 +32,7 @@ function love.mousepressed(x,y,button)
     )
     curPlanId = np.id
         table.insert( objects,np )
-    end
+    
     if button == 1 then
                 curPlanId = 0
         for i,v in ipairs(objects) do
@@ -47,7 +47,7 @@ function love.mousepressed(x,y,button)
         end
 
     end
-end
+end]]
 function love.mousereleased(x,y,button)
     if button == 3 then
         mouseDragging = false
@@ -65,39 +65,45 @@ function love.mousemoved(x,y,dx,dy)
 end
 
 function love.keypressed(key)
-    if key == "=" then
+    if key == "x" then
         speedMod = speedMod + 1
     end
-    if key == "-" then
+    if key == "a" then
         speedMod = math.abs(speedMod - 1)
     end
-    if key == "]" then
+    if key == "y" then
         speedMod = speedMod + 10
     end
-    if key == "[" then
+    if key == "b" then
         speedMod = speedMod - 10
         if speedMod <0 then
             speedMod = 0
         end
     end
-    if key == "r" then
+    if key == "start" then
         planetMenu = not planetMenu
     end
-    if key == "t" then
+    if key == "select" then
         focusObject = not focusObject
     end
-    if key == "lshift" then
+   --[[ if key == "lshift" then
         shift = true
     end
     if key == "lctrl" then
         ctrl = 1
-    end
+    end ]]
     if key == "m" then
         cxpos = 0
         cypos = 0
     end
-    if key == "h" then
-        saveGame("test1.json")
+   -- if key == "h" then
+   --     saveGame("test1.json")
+   -- end
+    if key == "r" and scale<10 then
+        scale=scale*1.2
+    end
+    if key == "l" and scale>0.01 then
+        scale=scale/1.2
     end
     ckey = key
     keyDown = true

@@ -2,7 +2,7 @@ require("functions")
 require("inputs")
 local sqrt = math.sqrt
 function love.load()
-    love.window.setMode(800,600,{vsync=1})
+    love.window.setMode(400,240,{vsync=1})
     G = 0.05
     nId = 1
     dt1 = 0
@@ -12,8 +12,8 @@ function love.load()
     ckey = ""
     speedMod = 0
     dragMode = 0
-    winX = 800
-    winY = 600
+    winX = 400
+    winY = 240
     rotSpeed = 3
     cxpos = 0
     cypos = 0
@@ -39,7 +39,7 @@ function love.load()
     }
 
     --loadGame("test1.json")
-    randomStart(290,225,1500)
+    randomStart(130,100,700)
 end
 
 function love.update(dt)
@@ -124,7 +124,7 @@ function love.update(dt)
                     objects[ctable].yvel = preXv * sinr + objects[ctable].yvel * cosr
                 end
     end
-    end
+
     for i,v in ipairs(collisions) do
                 
                 mergeBodies(v[1],v[2])
@@ -142,7 +142,9 @@ function love.update(dt)
         cxpos = cxpos+4
     end
 end
-function love.draw()
+end
+function love.draw(screen)
+    if screen ~= bottom then
     love.graphics.setColor(1,1,1)
     love.graphics.printf("Objects: "..#objects,0,0,250,"left")
     love.graphics.printf("Speed: x"..speedMod,0,15,250,"left")
@@ -160,42 +162,6 @@ function love.draw()
                 cypos = -objects[ctable].pos[2] * scale
             end
             if ctable ~= 0 then
-                if keyDown and ckey == "z" then
-                    keyDown = false
-                    objects[ctable].mass = objects[ctable].mass /10
-                end
-                if keyDown and ckey == "x" then
-                    keyDown = false
-                    objects[ctable].mass = objects[ctable].mass *10
-                end
-                if keyDown and ckey == "c" then
-                    keyDown = false
-                    objects[ctable].mass = objects[ctable].mass +1
-                end
-                if keyDown and ckey == "v" then
-                    keyDown = false
-                    objects[ctable].mass = objects[ctable].mass -1
-                end
-                if keyDown and ckey == "q" then
-                    keyDown = false
-                    objects[ctable].size = math.abs(objects[ctable].size -1)
-                end
-                if keyDown and ckey == "e" then
-                    keyDown = false
-                    objects[ctable].size = objects[ctable].size +1
-                end
-                if keyDown and ckey == "w" then
-                    keyDown = false
-                    objects[ctable].size = objects[ctable].size +1
-                end
-                if keyDown and ckey == "t" then
-                    keyDown = false
-                    if objects[ctable].type == "p" then
-                        objects[ctable].type = "s"
-                    else
-                        objects[ctable].type = "p"
-                    end
-                end
 
                 
                 love.graphics.printf("Mass: "..objects[ctable].mass,0,60,250,"left")
@@ -214,7 +180,7 @@ function love.draw()
         end
     end
 end
-
+end
 
 
 

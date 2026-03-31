@@ -1,4 +1,4 @@
-local json = require("dkjson")
+
 local sqrt = math.sqrt
 function planetUpdate(i1,i2,dt)
     ptable = objects[i1]
