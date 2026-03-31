@@ -38,7 +38,7 @@ function love.load()
     }
 
     --loadGame("test1.json")
-    randomStart(100,30)
+    randomStart(120,95)
 end
 
 function love.update(dt)
@@ -338,7 +338,19 @@ function mergeBodies(tab1,tab2,type)
     m = tab1.mass + tab2.mass
     vx = (tab1.xvel*tab1.mass +tab2.xvel *tab2.mass)/m
     vy = (tab1.yvel*tab1.mass +tab2.yvel *tab2.mass)/m
-    nplan = newPlanet(nrad,tab1.pos,{vx,vy},m,tab1.type)
+    ptype = tab1.type
+    if ptype == "p" and m > 1 then
+        ptype = "s"
+    end
+    if tab1.type == "b" or tab2.type == "b" then
+        ptype = "b"
+        if tab1.type == "b" then
+        nrad = tab1.size + math.floor(tab2.mass/900)
+        else
+            nrad = tab2.size + math.floor(tab1.mass/900)
+        end
+    end
+    nplan = newPlanet(nrad,tab1.pos,{vx,vy},m,ptype)
     table.insert(objects,nplan)
     for i=#objects,1,-1 do
         if objects[i].id == tab1.id or objects[i].id == tab2.id then

@@ -2,6 +2,13 @@ local json = require("dkjson")
 local sqrt = math.sqrt
 function planetUpdate(i1,i2,dt)
     ptable = objects[i1]
+    if ptable.mass > 10 then
+        ptable.type = "s"
+    end
+    if ptable.mass > 2700 then
+        ptable.type = "b"
+        ptable.size = math.random(1,2)
+    end
     ptable2 = objects[i2]
 
     
@@ -37,17 +44,40 @@ function planetDraw(ptable)
     love.graphics.line(ptable.pos[1]*scale+xoffset+cxoffset,ptable.pos[2]*scale+yoffset+cyoffset,lx,ly )
     else
         if ptable.type == "s" then
+        if ptable.mass > 1450 then
+            if ptable.size < 17 then
+                ptable.size = ptable.size + 3
+            end
+        clr = {1.0,.35,0.1}
+        love.graphics.setColor(clr[1],clr[2],clr[3],0.15)
+        love.graphics.circle("fill",ptable.pos[1]*scale+xoffset+cxoffset,ptable.pos[2]*scale+yoffset+cyoffset,math.ceil(ptable.size*scale*2.5))
+        love.graphics.setColor(clr[1],clr[2],clr[3])
+        love.graphics.circle("fill",ptable.pos[1]*scale+xoffset+cxoffset,ptable.pos[2]*scale+yoffset+cyoffset,math.ceil(ptable.size*scale))
+        else
         clr = getStarColor(ptable.mass)
         local brightness = 0.7 + math.sin(love.timer.getTime())*0.3
         love.graphics.setColor(clr[1],clr[2],clr[3],brightness/5)
-             love.graphics.circle("fill",ptable.pos[1]*scale+xoffset+cxoffset,ptable.pos[2]*scale+yoffset+cyoffset,math.ceil(ptable.size*scale*2.5))
+        love.graphics.circle("fill",ptable.pos[1]*scale+xoffset+cxoffset,ptable.pos[2]*scale+yoffset+cyoffset,math.ceil(ptable.size*scale*2.5))
         love.graphics.setColor(clr[1],clr[2],clr[3])
-        else
-        love.graphics.setColor(1,1,1)
-        end
         love.graphics.circle("fill",ptable.pos[1]*scale+xoffset+cxoffset,ptable.pos[2]*scale+yoffset+cyoffset,math.ceil(ptable.size*scale))
+        end
+    end
+        if ptable.type == "p" then
+            love.graphics.setColor(0.9,0.9,0.9)
+            love.graphics.circle("fill",ptable.pos[1]*scale+xoffset+cxoffset,ptable.pos[2]*scale+yoffset+cyoffset,math.ceil(ptable.size*scale))
+        end
+        if ptable.type == "b" then
+            
+            love.graphics.setColor(1,0.65,0.1)
+            
+            for i=0,ptable.size/3 do 
+            love.graphics.circle("line",ptable.pos[1]*scale+xoffset+cxoffset+math.random(-1,1),ptable.pos[2]*scale+yoffset+cyoffset+math.random(-1,1),math.ceil(ptable.size*scale+1+i))
+            end
+        end
+
     end
 end
+
 
 function newPlanet(psize,ppos,speed,pmass,t)
     local planetTable = {   
@@ -108,20 +138,20 @@ end
 
 function randomStart(planNum,starNum)
 for i=1,planNum do
-    local x = love.math.random(-700,700)
-    local y = love.math.random(-700,700)
+    local x = love.math.random(-1000,1000)
+    local y = love.math.random(-1000,1000)
     local mass = randFloat(0.05,0.9)
-    local vel = {randFloat(-0.7,0.7),randFloat(-0.7,0.7)}
+    local vel = {randFloat(-1,1),randFloat(-1,1)}
 
     local size = love.math.random(1,3)
     local p = newPlanet(size,{x,y},vel,mass,"p")
     table.insert(objects,p)
 end
 for i=1,starNum do
-    local x = love.math.random(-700,700)
-    local y = love.math.random(-700,700)
+    local x = love.math.random(-1000,1000)
+    local y = love.math.random(-1000,1000)
     local mass = love.math.random(70,200)
-    local vel = {randFloat(-0.7,0.7),randFloat(-0.7,0.7)}
+    local vel = {randFloat(-1,1),randFloat(-1,1)}
     local size = love.math.random(3,9)
     local s = newPlanet(size,{x,y},vel,mass,"s")
     table.insert(objects,s)
