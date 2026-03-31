@@ -5,7 +5,7 @@ function planetUpdate(i1,i2,dt)
     if ptable.mass > 10 then
         ptable.type = "s"
     end
-    if ptable.mass > 2700 then
+    if ptable.mass > 2700 and ptable.type ~= "b" then
         ptable.type = "b"
         ptable.size = math.random(1,2)
     end
@@ -15,7 +15,9 @@ function planetUpdate(i1,i2,dt)
                 dx = ptable2.pos[1] - ptable.pos[1]
                 dy = ptable2.pos[2] - ptable.pos[2]
                 d = sqrt(dx^2+dy^2)
-                movDir = {dx/d,dy/d}
+                if d < 0.001 then
+                    return {ptable,ptable2}
+                end
                 local f = G/(d^2+5) * dt * speedMod
                 xf = dx/d*f
                 yf = dy/d*f
@@ -136,11 +138,12 @@ function getStarColor(mass)
     }
 end
 
-function randomStart(planNum,starNum)
+function randomStart(planNum,starNum,s)
 for i=1,planNum do
-    local x = love.math.random(-1000,1000)
-    local y = love.math.random(-1000,1000)
-    local mass = randFloat(0.05,0.9)
+    local x = love.math.random(-s,s)
+    local y = love.math.random(-s,s)
+    local mass = math.random(3,900)/1000
+    
     local vel = {randFloat(-1,1),randFloat(-1,1)}
 
     local size = love.math.random(1,3)
@@ -148,8 +151,8 @@ for i=1,planNum do
     table.insert(objects,p)
 end
 for i=1,starNum do
-    local x = love.math.random(-1000,1000)
-    local y = love.math.random(-1000,1000)
+       local x = love.math.random(-s,s)
+    local y = love.math.random(-s,s)
     local mass = love.math.random(70,200)
     local vel = {randFloat(-1,1),randFloat(-1,1)}
     local size = love.math.random(3,9)
