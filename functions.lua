@@ -33,6 +33,7 @@ function planetUpdate(i1,i2,dt)
     return {ptable,ptable2}
 end
 function planetDraw(ptable)
+    --love.graphics.setShader(shaders.whiteout)
     cxoffset = cxpos + winX * (1/2 * scale)
     cyoffset = cypos + winY * (1/2 * scale)
     if curPlanId == ptable.id then
@@ -63,9 +64,13 @@ function planetDraw(ptable)
         end
         local brightness = 0.7 + math.sin(love.timer.getTime()+ptable.id*2.5)*0.3
         love.graphics.setColor(clr[1],clr[2],clr[3],brightness/5)
-        love.graphics.circle("fill",ptable.pos[1]*scale+xoffset+cxoffset,ptable.pos[2]*scale+yoffset+cyoffset,math.ceil(ptable.size*scale*2.5))
-        love.graphics.setColor(clr[1],clr[2],clr[3],brightness/12)
+        --love.graphics.circle("fill",ptable.pos[1]*scale+xoffset+cxoffset,ptable.pos[2]*scale+yoffset+cyoffset,math.ceil(ptable.size*scale*2.5))
+        love.graphics.setColor(clr[1],clr[2],clr[3])
+        love.graphics.setShader(shaders.light)
+        shaders.light:send("sourcePos", {ptable.pos[1]*scale+xoffset+cxoffset,ptable.pos[2]*scale+yoffset+cyoffset})
+        shaders.light:send("radius",math.ceil(ptable.size*scale*((ptable.mass/85)*2.5)^0.7))
         love.graphics.circle("fill",ptable.pos[1]*scale+xoffset+cxoffset,ptable.pos[2]*scale+yoffset+cyoffset,math.ceil(ptable.size*scale*((ptable.mass/85)*2.5)^0.7))
+        love.graphics.setShader(shaders.normal)
         love.graphics.setColor(clr[1],clr[2],clr[3])
         love.graphics.circle("fill",ptable.pos[1]*scale+xoffset+cxoffset,ptable.pos[2]*scale+yoffset+cyoffset,math.ceil(ptable.size*scale))
         end
@@ -92,6 +97,7 @@ function planetDraw(ptable)
         end
 
     end
+    --love.graphics.setShader(shaders.normal)
 end
 
 

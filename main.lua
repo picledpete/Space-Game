@@ -1,6 +1,7 @@
 require("functions")
 local sqrt = math.sqrt
 function love.load()
+    shaders = require("shaders")
     love.window.setMode(800,600,{vsync=1})
     G = 0.05
     nId = 1
@@ -33,6 +34,7 @@ function love.load()
     cxoffset = cxpos + winX * (1/2 * scale)
     cyoffset = cypos + winY * (1/2 * scale)
     focusObject = false
+    bg = love.graphics.newCanvas()
     objects = {
 
     }
@@ -159,6 +161,8 @@ function love.update(dt)
 end
 end
 function love.draw()
+
+    love.graphics.setShader(shaders.normal)
     love.graphics.setColor(1,1,1)
     love.graphics.printf("Objects: "..#objects,0,0,250,"left")
     love.graphics.printf("Speed: x"..speedMod,0,15,250,"left")
