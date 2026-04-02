@@ -55,15 +55,31 @@ function planetDraw(ptable)
         love.graphics.circle("fill",ptable.pos[1]*scale+xoffset+cxoffset,ptable.pos[2]*scale+yoffset+cyoffset,math.ceil(ptable.size*scale))
         else
         clr = getStarColor(ptable.mass)
-        local brightness = 0.7 + math.sin(love.timer.getTime())*0.3
+        if scale <0.1 then
+            local offset = 1-(scale-0.01)/0.09
+            clr[1] = clr[1] +offset/3
+            clr[2] = clr[2] +offset/3
+            clr[3] = clr[3] +offset/3
+        end
+        local brightness = 0.7 + math.sin(love.timer.getTime()+ptable.id*2.5)*0.3
         love.graphics.setColor(clr[1],clr[2],clr[3],brightness/5)
         love.graphics.circle("fill",ptable.pos[1]*scale+xoffset+cxoffset,ptable.pos[2]*scale+yoffset+cyoffset,math.ceil(ptable.size*scale*2.5))
+        love.graphics.setColor(clr[1],clr[2],clr[3],brightness/12)
+        love.graphics.circle("fill",ptable.pos[1]*scale+xoffset+cxoffset,ptable.pos[2]*scale+yoffset+cyoffset,math.ceil(ptable.size*scale*((ptable.mass/85)*2.5)^0.7))
         love.graphics.setColor(clr[1],clr[2],clr[3])
         love.graphics.circle("fill",ptable.pos[1]*scale+xoffset+cxoffset,ptable.pos[2]*scale+yoffset+cyoffset,math.ceil(ptable.size*scale))
         end
     end
         if ptable.type == "p" then
-            love.graphics.setColor(0.9,0.9,0.9)
+            clr = {0.9,0.9,0.9}
+            --[[
+            if scale <0.1 then
+                local offset = 1-(scale-0.01)/0.09
+                clr[1] = clr[1] +offset
+                clr[2] = clr[2] +offset
+                clr[3] = clr[3] +offset
+            end]]
+            love.graphics.setColor(clr[1],clr[2],clr[3])
             love.graphics.circle("fill",ptable.pos[1]*scale+xoffset+cxoffset,ptable.pos[2]*scale+yoffset+cyoffset,math.ceil(ptable.size*scale))
         end
         if ptable.type == "b" then

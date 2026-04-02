@@ -38,7 +38,7 @@ function love.load()
     }
 
     --loadGame("test1.json")
-    randomStart(120,95)
+    randomStart(140,110,1500)
 end
 
 function love.update(dt)
@@ -125,9 +125,25 @@ function love.update(dt)
     end
     end
     for i,v in ipairs(collisions) do
+        tab1 = v[1]
+        tab2 = v[2]
+        if tab1.type == "p" and tab2.type == "p" then
+            local rvx = tab1.xvel - tab2.xvel
+            local rvy = tab1.yvel - tab2.yvel
+            local relSpeed = math.sqrt(rvx*rvx + rvy*rvy)
+            local dx = tab1.pos[1] - tab2.pos[1]
+            local dy = tab1.pos[2] - tab2.pos[2]
+            local dist = math.sqrt(dx*dx + dy*dy)
                 
-                mergeBodies(v[1],v[2])
-            end
+            local escVel = math.sqrt(2 * G * (tab1.mass + tab2.mass) / dist)
+                        if relSpeed < escVel then
+                        mergeBodies(v[1],v[2])
+                        end
+                    
+                    
+                    else
+                        mergeBodies(v[1],v[2])
+                    end
     if love.keyboard.isDown("w") then
         cypos = cypos+4
     end
@@ -140,6 +156,7 @@ function love.update(dt)
     if love.keyboard.isDown("a") then
         cxpos = cxpos+4
     end
+end
 end
 function love.draw()
     love.graphics.setColor(1,1,1)
@@ -341,6 +358,9 @@ function mergeBodies(tab1,tab2,type)
     ptype = tab1.type
     if ptype == "p" and m > 1 then
         ptype = "s"
+    end
+    if tab1.type == "p" and tab2.type == "p" then
+
     end
     if tab1.type == "b" or tab2.type == "b" then
         ptype = "b"
