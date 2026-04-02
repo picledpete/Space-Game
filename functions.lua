@@ -5,7 +5,7 @@ function planetUpdate(i1,i2,dt)
     if ptable.mass > 10 then
         ptable.type = "s"
     end
-    if ptable.mass > 2700 then
+    if ptable.mass > 2700 and ptable.type ~= "b" then
         ptable.type = "b"
         ptable.size = math.random(1,2)
     end
@@ -15,10 +15,16 @@ function planetUpdate(i1,i2,dt)
                 dx = ptable2.pos[1] - ptable.pos[1]
                 dy = ptable2.pos[2] - ptable.pos[2]
                 d = sqrt(dx^2+dy^2)
+                if d < 0.001 then
+                    return {ptable, ptable2}
+                end
                 movDir = {dx/d,dy/d}
                 local f = G/(d^2+5) * dt * speedMod
                 xf = dx/d*f
                 yf = dy/d*f
+                if xf ~= xf or yf ~= yf then
+                    return {ptable, ptable2}
+                end
                 ptable.xvel = ptable.xvel + xf*ptable2.mass
                 ptable.yvel = ptable.yvel + yf*ptable2.mass
 
@@ -50,12 +56,10 @@ function planetDraw(ptable)
                 ptable.size = ptable.size + 3
             end
         clr = {1.0,.35,0.1}
-        love.graphics.setColor(clr[1],clr[2],clr[3],0.15)
-        love.graphics.circle("fill",ptable.pos[1]*scale+xoffset+cxoffset,ptable.pos[2]*scale+yoffset+cyoffset,math.ceil(ptable.size*scale*2.5))
-        love.graphics.setColor(clr[1],clr[2],clr[3])
-        love.graphics.circle("fill",ptable.pos[1]*scale+xoffset+cxoffset,ptable.pos[2]*scale+yoffset+cyoffset,math.ceil(ptable.size*scale))
+
         else
         clr = getStarColor(ptable.mass)
+        end
         if scale <0.1 then
             local offset = 1-(scale-0.01)/0.09
             clr[1] = clr[1] +offset/3
@@ -73,7 +77,7 @@ function planetDraw(ptable)
         love.graphics.setShader(shaders.normal)
         love.graphics.setColor(clr[1],clr[2],clr[3])
         love.graphics.circle("fill",ptable.pos[1]*scale+xoffset+cxoffset,ptable.pos[2]*scale+yoffset+cyoffset,math.ceil(ptable.size*scale))
-        end
+
     end
         if ptable.type == "p" then
             clr = {0.9,0.9,0.9}
@@ -158,22 +162,43 @@ function getStarColor(mass)
     }
 end
 
-function randomStart(planNum,starNum)
+function randomStart(planNum,starNum,maxRad,generateOrbits)
 for i=1,planNum do
-    local x = love.math.random(-1000,1000)
-    local y = love.math.random(-1000,1000)
+    local r = (love.math.random()^0.7)*maxRad
+    local angle = love.math.random()*math.pi*2
+    local x = math.cos(angle)*r
+    local y = math.sin(angle)*r
     local mass = randFloat(0.05,0.9)
-    local vel = {randFloat(-1,1),randFloat(-1,1)}
-
+    if generateOrbits then
+        local dist = math.sqrt(x^2+y^2)
+        if dist <1 then dist=1 end
+        local nspeed = math.sqrt(G*5000/dist)
+        local dx = -y/dist*nspeed
+        local dy = x/dist*nspeed
+        vel = {dx,dy}
+    else
+    vel = {randFloat(-1,1),randFloat(-1,1)}
+    end
     local size = love.math.random(1,3)
     local p = newPlanet(size,{x,y},vel,mass,"p")
     table.insert(objects,p)
 end
 for i=1,starNum do
-    local x = love.math.random(-1000,1000)
-    local y = love.math.random(-1000,1000)
+    local r = (love.math.random()^0.7)*maxRad
+    local angle = love.math.random()*math.pi*2
+    local x = math.cos(angle)*r
+    local y = math.sin(angle)*r
     local mass = love.math.random(70,200)
-    local vel = {randFloat(-1,1),randFloat(-1,1)}
+        if generateOrbits then
+        local dist = math.sqrt(x^2+y^2)
+        if dist <1 then dist=1 end
+        local nspeed = math.sqrt(G*5000/dist)
+        local dx = -y/dist*nspeed
+        local dy = x/dist*nspeed
+        vel = {dx,dy}
+    else
+    vel = {randFloat(-1,1),randFloat(-1,1)}
+    end
     local size = love.math.random(3,9)
     local s = newPlanet(size,{x,y},vel,mass,"s")
     table.insert(objects,s)

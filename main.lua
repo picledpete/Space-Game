@@ -40,7 +40,7 @@ function love.load()
     }
 
     --loadGame("test1.json")
-    randomStart(140,110,1500)
+    randomStart(340,150,1000,true)
 end
 
 function love.update(dt)
@@ -58,9 +58,13 @@ function love.update(dt)
     for i,v in ipairs(objects) do
         objects[i].pos[1] = objects[i].pos[1] + objects[i].xvel*dt *speedMod
         objects[i].pos[2] = objects[i].pos[2] + objects[i].yvel*dt *speedMod
-
-
-    end
+        if objects[i].pos[1] ~= objects[i].pos[1] or objects[i].pos[2] ~= objects[i].pos[2]
+           or objects[i].xvel ~= objects[i].xvel or objects[i].yvel ~= objects[i].yvel then
+            objects[i].pos[1] = 0
+            objects[i].pos[2] = 0
+            objects[i].xvel = 0
+            objects[i].yvel = 0
+        end    end
 
     for i,v in ipairs(objects) do
         for i2=i+1,#objects do
@@ -373,6 +377,7 @@ function mergeBodies(tab1,tab2,type)
         else
             nrad = tab2.size + math.floor(tab1.mass/900)
         end
+        nrad = math.min(nrad, 50)
     end
     nplan = newPlanet(nrad,tab1.pos,{vx,vy},m,ptype)
     table.insert(objects,nplan)

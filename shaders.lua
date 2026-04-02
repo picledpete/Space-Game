@@ -16,7 +16,8 @@ extern vec2 sourcePos;
 extern float radius;
 vec4 effect(vec4 color,Image texture,vec2 texture_coords,vec2 screen_coords) {
     float distance = length(screen_coords - sourcePos);
-    float nAlpha = (1-distance/radius)/2;
+    float nAlpha = (1-distance/radius);
+    nAlpha = (1-(1-nAlpha)*(1-nAlpha))/2;
     return vec4(color.rgb,nAlpha);
 }
 ]]
